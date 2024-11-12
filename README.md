@@ -40,3 +40,6 @@ It is a function calculating the chi square.
 If it is useful, is a function rounding each element within an array to the second digit after the decimal point.
 
 All these functions can be imported and called within your python script.
+
+FOR ANY ISSUE OF DOUBTS, YOU CAN VISIT THE GITHUB PAGE AT: https://github.com/gcorucci/Simple_Simulated_Annealing_curve_fit
+OR DROP AN EMAIL AT: giacomocorucci@virgilio.it
