@@ -1,10 +1,10 @@
 # Simple Simulated Annealing curve fit algorithm
 
 ## Introduction
-Simulated Annealing algorithm has been extensively used for many applications from computer science to biology. This algorithm is a random-search method in which the new solutions, generated according to a sequence of probability distributions (in this case the Boltzmann distribution), may be accepted even if theydo not lead to an improvement in the objective function. This algorithm can also be used to fit experimental data with complex theoretical models, where the need to escape from relative minima is a cricial part of the fitting process.
+Simulated Annealing algorithm has been extensively used for many applications from computer science to biology. This algorithm is a random-search method in which the new solutions, generated according to a sequence of probability distributions (in this case the Boltzmann distribution), may be accepted even if they do not lead to an improvement in the objective function. This algorithm can also be used to fit experimental data with complex theoretical models, where the need to escape from relative minima is a cricial part of the fitting process.
 
-### Usage
-The principal function of this package is the following:
+### Usage and installation
+To install this python library you can just use the following command "pip install SimAnn" and you will get the lastest version of this package. The principal function of this package is the following:
 
 SimAnn_fit(x, y, e, func, params, min, max, temp, alpha, n, chi_or_y_th, args)
 
@@ -23,11 +23,19 @@ Where:
 
 The function returns the optimised parameters!
 
-#### Considerations
-Not always it gives a good fit. Indeed, since it is a random based algorithm, higher iterations allow to explore more the parameters space.
-- If you have a very large range (min end max range) of many parameters, the algorithm might struggle to find the absolute minima. A suggestion would be to fit your function many times and reduce the range of your parameters to have a final better fit, changing also the temperature, alpha and iteration number.
+Just as an example, you can set it up as follows:
 
-- A good thing would be to use other minimisation algorithms after the SimAnn in order to cool down a bit more the fit (using for instance a steepest descent method) to find a more minimised parameters.
+temp  = 1e4
+alpha = 0.97
+n     = 1e4
+final_params = SimAnn_fit(x,y,err,func,params,min,max,temp,alpha,n,'notchi',args)
+
+#### Considerations
+Not always it gives a good fit. Indeed, since it is a random based algorithm, higher iterations allow to explore more parameters space.
+
+- If you have a very large range (min end max range) of the parameters, the algorithm might struggle to find the absolute minima. A suggestion would be to fit your function and reduce afterwards the range of your parameters to have a final better fit. You might want to adjust the temperature, alpha and iteration number as well.
+
+- A good practice would be to use other minimisation algorithms after the SimAnn in order to cool down a bit more the fit (using for instance a steepest descent method, giving to it the SimAnn minimised parameters). 
 
 ##### Other functions in the library
 - residuals(y,y_th)
@@ -42,4 +50,6 @@ If it is useful, is a function rounding each element within an array to the seco
 All these functions can be imported and called within your python script.
 
 FOR ANY ISSUE OF DOUBTS, YOU CAN VISIT THE GITHUB PAGE AT: https://github.com/gcorucci/Simple_Simulated_Annealing_curve_fit
+
 OR DROP AN EMAIL AT: giacomocorucci@virgilio.it
+
