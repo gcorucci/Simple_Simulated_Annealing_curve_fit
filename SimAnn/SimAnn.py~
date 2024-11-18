@@ -1,0 +1,103 @@
+import numpy as np
+import random,sys,os
+
+def array_round(array):
+    new_array = np.zeros(len(array))
+    for i,j in enumerate(array):
+        new_array[i] = round(j,2)
+    return new_array
+
+def chi_calculation(y,e,y_th):
+    chi_square = sum((y-y_th)**2/(e**2))/len(y)
+    return chi_square
+
+def residuals(y,y_th):
+    return abs(y-y_th)
+
+''' TO BE ADDED
+-> a flag indicating whether the target function returns the chi square or other values such as y theoretical
+-> an "args" parameter as input parameter of the SimAnn_fit function, in case the target function inputs not only the parameters.
+
+'''
+def SimAnn_fit(x, y, e, func, params, __min, __max, temp, alpha, n, chi_or_y_th, args):
+
+    if chi_or_y_th == 'chi':
+        chi_initial = func(params,*args)
+    else:
+        chi_initial = chi_calculation(y,e,func(params,*args))
+        
+    result_comp = [chi_initial]
+    temp_comp   = [temp]
+    values_comp = np.zeros([int(n),len(params)])
+    count_of_accepted = 0
+    acc_params = np.zeros(len(params))
+    values_comp[0] = params[:]
+    for i in range(int(n)):
+        for par in range(len(params)):
+            params[par] = random.uniform(__min[par],__max[par])
+
+        if chi_or_y_th == 'chi':
+            result = func(params,*args)
+        else:
+            result = chi_calculation(y,e,func(params,*args))
+            
+        #result = func(params,x, y, e, 1)
+        #temperature
+        temp = temp * alpha
+        DE = abs(result_comp[-1]-result)
+        p  = np.exp(-DE/temp)
+
+        #random r
+        r = random.uniform(0,1)
+        #print('prob',p, DE,temp)
+        if result_comp[-1]<result:
+            if r < p :
+                accept = True
+            else:
+                accept = False
+
+        else:
+            accept = True
+
+
+        if accept == True:
+            #print(value,temp)
+            count_of_accepted = count_of_accepted+1
+            result_comp       = np.append(result_comp,result)
+            temp_comp         = np.append(temp_comp,temp)
+            values_comp[count_of_accepted] = params[:]
+            #temp_comp      = np.append(temp_comp,temp)
+            acc_params = values_comp[count_of_accepted]
+        #print('Is it accepted?\t',accept)
+        #print('Temperature\t',round(temp,4))
+        #print('Iteration step\t',i,'/',n)
+        #print(acc_params,accept)
+        pr = 'Iteration step: '+str(i)+' Parameters: '+str(round_func(acc_params))+' chi: '+str(round(result_comp[-1],2))
+        #print(f'\rUpdating: {pr}', end='\r')
+
+        #sys.stdout.write('\r' + ' ' * 50)
+        #os.system('clear')
+
+        sys.stdout.write(f'\r{pr}')
+        sys.stdout.flush()
+
+        #try:
+        #    print('Params', acc_params,'chi',result_comp[-1])
+        #except:
+        #    print()
+        percentage_process = i/n
+        #try:
+        #    print('Number of accepted steps',count_of_accepted+1,', with a last chi of',result_comp[-1],', with a min of',min(result_comp[1:]),'Initial chi square ',result_comp[0])
+        #except:
+        #    print()
+        #print()
+        #print('Progress of the minimization --> [','#'*int(50*percentage_process),' '*int(50*(1-percentage_process)),']',round(percentage_process*100,2),'%')
+        #print()
+        #print()
+        
+    np.savetxt('Minimization_SA.txt', np.c_[range(count_of_accepted+1),result_comp,temp_comp])
+    fitted_params = values_comp[count_of_accepted,:]
+    np.savetxt('Fitted_SA_Params.txt', np.c_[result_comp[1:],values_comp[:count_of_accepted]])
+    print('\nFitted params ',fitted_params)
+    return fitted_params
+
